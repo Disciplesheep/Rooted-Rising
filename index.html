@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="screen-orientation" content="landscape"/>
 <title>Rooted in Faith, Rising in Unity</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400;600;700&display=swap" rel="stylesheet"/>
 <style>
@@ -29,6 +30,38 @@
     font-family:'Cormorant Garamond', serif;
   }
 
+  /* ── ROTATE-TO-LANDSCAPE OVERLAY (shown only in portrait) ── */
+  #rotate-prompt {
+    display:none;
+    position:fixed; inset:0; z-index:9999;
+    background:#0e1a10;
+    flex-direction:column;
+    align-items:center; justify-content:center;
+    gap:20px;
+  }
+  #rotate-prompt .rotate-icon {
+    font-size:clamp(50px,15vw,80px);
+    animation: rotateHint 1.8s ease-in-out infinite;
+  }
+  @keyframes rotateHint {
+    0%,100% { transform: rotate(0deg); }
+    40%      { transform: rotate(90deg); }
+    60%      { transform: rotate(90deg); }
+  }
+  #rotate-prompt p {
+    font-family:'Josefin Sans',sans-serif;
+    font-size:clamp(13px,4vw,18px);
+    letter-spacing:0.25em;
+    text-transform:uppercase;
+    color:rgba(201,168,76,0.85);
+    text-align:center;
+    padding:0 24px;
+  }
+  @media (orientation: portrait) {
+    #rotate-prompt { display:flex; }
+    #app, #nav, #progress-bar { display:none !important; }
+  }
+
   /* ── PROGRESS BAR ── */
   #progress-bar {
     position:fixed; top:0; left:0; height:3px;
@@ -39,9 +72,12 @@
   }
 
   /* ── SLIDE CONTAINER ── */
+  /* Reserve right strip for nav bar */
   #app {
-    width:100%; height:100%;
-    position:relative;
+    position:fixed;
+    top:0; left:0;
+    right: clamp(72px, 10vw, 100px);
+    bottom:0;
     overflow:hidden;
   }
 
@@ -49,42 +85,42 @@
     position:absolute; inset:0;
     display:flex; flex-direction:column;
     align-items:center; justify-content:center;
-    padding: clamp(24px, 6vw, 60px) clamp(20px, 5vw, 50px);
-    padding-bottom: calc(clamp(24px, 6vw, 60px) + env(safe-area-inset-bottom, 0px));
+    /* landscape: tall padding top/bottom, moderate left/right */
+    padding: clamp(16px, 3vh, 40px) clamp(32px, 6vw, 80px);
     opacity:0;
     visibility:hidden;
     pointer-events:none;
     text-align:center;
     transition: opacity 0.55s cubic-bezier(.4,0,.2,1), transform 0.55s cubic-bezier(.4,0,.2,1), visibility 0s 0.55s;
-    transform: translateY(0) scale(1);
+    transform: translateX(0) scale(1);
   }
   .slide.enter-from-forward {
-    transform: translateY(36px) scale(0.97);
+    transform: translateX(40px) scale(0.97);
     opacity: 0;
     visibility: visible;
   }
   .slide.enter-from-back {
-    transform: translateY(-28px) scale(1.02);
+    transform: translateX(-32px) scale(1.02);
     opacity: 0;
     visibility: visible;
   }
   .slide.active {
     opacity:1;
     visibility:visible;
-    transform:translateY(0) scale(1);
+    transform:translateX(0) scale(1);
     pointer-events:all;
     transition: opacity 0.55s cubic-bezier(.4,0,.2,1), transform 0.55s cubic-bezier(.4,0,.2,1), visibility 0s 0s;
   }
   .slide.exit-to-back {
     opacity:0;
-    transform: translateY(28px) scale(0.97);
+    transform: translateX(28px) scale(0.97);
     pointer-events:none;
     transition: opacity 0.35s ease-in, transform 0.35s ease-in, visibility 0s 0.35s;
     visibility:hidden;
   }
   .slide.exit-to-forward {
     opacity:0;
-    transform: translateY(-28px) scale(1.02);
+    transform: translateX(-28px) scale(1.02);
     pointer-events:none;
     transition: opacity 0.35s ease-in, transform 0.35s ease-in, visibility 0s 0.35s;
     visibility:hidden;
@@ -117,73 +153,73 @@
   /* ── CONTENT ELEMENTS ── */
   .eyebrow {
     font-family:'Josefin Sans', sans-serif;
-    font-size: clamp(8px, 2.2vw, 12px);
-    letter-spacing: 0.35em;
+    font-size: clamp(10px, 2vmin, 16px);
+    letter-spacing: 0.3em;
     text-transform:uppercase;
     color: var(--gold);
-    opacity:0.85;
-    margin-bottom: clamp(8px, 2vw, 16px);
+    opacity:1;
+    margin-bottom: clamp(6px, 1.5vmin, 14px);
   }
 
   h1 {
     font-family:'Playfair Display', serif;
-    font-size: clamp(2rem, 9vw, 5rem);
+    font-size: clamp(2.2rem, 9vmin, 6.5rem);
     font-weight:900;
     line-height:1.05;
-    color: var(--cream);
-    margin-bottom: clamp(12px, 3vw, 24px);
-    text-shadow: 0 2px 20px rgba(0,0,0,0.4);
+    color: #ffffff;
+    margin-bottom: clamp(10px, 2.5vmin, 24px);
+    text-shadow: 0 2px 24px rgba(0,0,0,0.5);
   }
   h1 em { color: var(--gold-light); font-style:italic; }
 
   h2 {
     font-family:'Playfair Display', serif;
-    font-size: clamp(1.5rem, 6vw, 3.2rem);
+    font-size: clamp(1.6rem, 7vmin, 4.5rem);
     font-weight:700;
     line-height:1.1;
-    color: var(--cream);
-    margin-bottom: clamp(10px, 2.5vw, 20px);
-    text-shadow: 0 2px 16px rgba(0,0,0,0.3);
+    color: #ffffff;
+    margin-bottom: clamp(8px, 2vmin, 20px);
+    text-shadow: 0 2px 18px rgba(0,0,0,0.4);
   }
   h2 em { color: var(--gold-light); font-style:italic; }
 
   h3 {
     font-family:'Playfair Display', serif;
-    font-size: clamp(1.1rem, 4.5vw, 2.2rem);
+    font-size: clamp(1.2rem, 5.5vmin, 3rem);
     font-style:italic;
     font-weight:400;
-    color: var(--cream);
+    color: #ffffff;
     line-height:1.25;
-    margin-bottom: clamp(8px, 2vw, 16px);
+    margin-bottom: clamp(8px, 2vmin, 16px);
   }
 
   .body {
     font-family:'Cormorant Garamond', serif;
-    font-size: clamp(0.95rem, 3.5vw, 1.5rem);
+    font-size: clamp(1rem, 4vmin, 2rem);
     line-height:1.65;
-    color: rgba(245,240,232,0.8);
-    max-width:56ch;
+    color: rgba(255,252,245,0.95);
+    max-width:60ch;
   }
   .body strong { color: var(--gold-light); font-weight:600; }
 
   .verse-block {
     border-left: 3px solid var(--gold);
-    padding-left: clamp(12px, 3vw, 24px);
+    padding-left: clamp(12px, 2.5vmin, 24px);
     text-align:left;
-    margin: clamp(12px, 3vw, 24px) 0;
-    max-width:52ch;
+    margin: clamp(10px, 2vmin, 22px) 0;
+    max-width:58ch;
   }
   .verse-text {
     font-family:'Playfair Display', serif;
-    font-size: clamp(1rem, 3.8vw, 1.6rem);
+    font-size: clamp(1.1rem, 4.5vmin, 2.2rem);
     font-style:italic;
-    color: var(--cream);
+    color: #ffffff;
     line-height:1.5;
     margin-bottom: 6px;
   }
   .verse-ref {
     font-family:'Josefin Sans', sans-serif;
-    font-size: clamp(8px, 2.2vw, 11px);
+    font-size: clamp(9px, 2vmin, 13px);
     letter-spacing:0.3em;
     text-transform:uppercase;
     color: var(--gold);
@@ -191,32 +227,32 @@
 
   .big-number {
     font-family:'Playfair Display', serif;
-    font-size: clamp(4rem, 20vw, 10rem);
+    font-size: clamp(4rem, 18vmin, 11rem);
     font-weight:900;
     color: var(--gold);
     line-height:0.9;
-    opacity:0.15;
+    opacity:0.18;
     position:absolute;
-    right: clamp(12px, 4vw, 40px);
-    top: clamp(12px, 4vw, 40px);
+    right: clamp(10px, 3vmin, 36px);
+    top: clamp(10px, 3vmin, 36px);
     user-select:none;
   }
 
   .truth-label {
     font-family:'Josefin Sans', sans-serif;
-    font-size: clamp(7px, 2vw, 10px);
-    letter-spacing:0.4em;
+    font-size: clamp(9px, 2vmin, 13px);
+    letter-spacing:0.35em;
     text-transform:uppercase;
     color: var(--gold);
-    opacity:0.7;
-    margin-bottom: clamp(6px, 1.5vw, 12px);
+    opacity:0.9;
+    margin-bottom: clamp(6px, 1.5vmin, 12px);
   }
 
   .divider {
-    width: clamp(30px, 8vw, 60px);
-    height:1px;
+    width: clamp(36px, 8vmin, 64px);
+    height:2px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    margin: clamp(10px, 2.5vw, 20px) auto;
+    margin: clamp(8px, 2vmin, 18px) auto;
   }
 
   .pebble-row {
@@ -247,91 +283,102 @@
     margin: clamp(10px, 2.5vw, 20px) 0;
   }
   .pill {
-    background: rgba(201,168,76,0.12);
-    border: 1px solid rgba(201,168,76,0.3);
+    background: rgba(201,168,76,0.15);
+    border: 1px solid rgba(201,168,76,0.4);
     border-radius:100px;
-    padding: clamp(5px,1.5vw,8px) clamp(12px,3.5vw,20px);
+    padding: clamp(6px, 1.5vmin, 10px) clamp(12px, 3vmin, 22px);
     font-family:'Josefin Sans', sans-serif;
-    font-size: clamp(9px, 2.8vw, 13px);
+    font-size: clamp(10px, 2.5vmin, 15px);
     letter-spacing:0.1em;
     color: var(--gold-light);
   }
 
   .highlight-box {
-    background: rgba(201,168,76,0.08);
-    border: 1px solid rgba(201,168,76,0.2);
-    border-radius: clamp(8px, 2vw, 16px);
-    padding: clamp(14px, 4vw, 28px);
-    margin: clamp(10px, 2.5vw, 20px) 0;
-    max-width:54ch;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: clamp(8px, 2vmin, 16px);
+    padding: clamp(12px, 3vmin, 28px);
+    margin: clamp(8px, 2vmin, 18px) 0;
+    max-width:58ch;
     width:100%;
   }
 
   .look-directions {
-    display:flex; gap: clamp(24px, 8vw, 60px);
-    margin: clamp(16px, 4vw, 32px) 0;
+    display:flex; gap: clamp(20px, 6vmin, 60px);
+    margin: clamp(12px, 3vmin, 28px) 0;
   }
   .direction {
     font-family:'Playfair Display', serif;
-    font-size: clamp(1.4rem, 6vw, 3rem);
+    font-size: clamp(1.4rem, 6vmin, 3.4rem);
     font-style:italic;
     color: var(--gold-light);
   }
 
-  /* ── NAVIGATION ── */
+  /* ── NAVIGATION — right-side vertical strip ── */
   #nav {
     position:fixed;
-    bottom: calc(clamp(16px, 5vw, 32px) + env(safe-area-inset-bottom, 0px));
-    left:50%; transform:translateX(-50%);
-    display:flex; align-items:center; gap: clamp(8px, 3vw, 16px);
+    top:0; right:0; bottom:0;
+    width: clamp(72px, 10vw, 100px);
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    gap: clamp(10px, 2vmin, 18px);
     z-index:100;
+    background: rgba(10,20,12,0.6);
+    border-left: 1px solid rgba(201,168,76,0.12);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    padding: 16px 0;
   }
 
   .nav-btn {
-    background: rgba(201,168,76,0.15);
-    border: 1px solid rgba(201,168,76,0.35);
+    background: rgba(201,168,76,0.12);
+    border: 1px solid rgba(201,168,76,0.3);
     color: var(--gold-light);
-    border-radius:100px;
+    border-radius: clamp(8px, 1.5vmin, 12px);
     cursor:pointer;
     font-family:'Josefin Sans', sans-serif;
-    font-size: clamp(10px, 3vw, 13px);
-    letter-spacing:0.15em;
+    font-size: clamp(9px, 1.8vmin, 13px);
+    letter-spacing:0.1em;
     text-transform:uppercase;
-    padding: clamp(9px, 2.5vw, 14px) clamp(16px, 5vw, 28px);
-    transition: all 0.25s ease;
-    backdrop-filter:blur(8px);
-    -webkit-backdrop-filter:blur(8px);
+    /* vertical writing — rotated */
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    padding: clamp(12px, 2.5vmin, 20px) clamp(8px, 1.5vmin, 12px);
+    width: clamp(40px, 6vmin, 56px);
+    transition: all 0.22s ease;
     user-select:none;
     touch-action:manipulation;
   }
   .nav-btn:active { transform:scale(0.94); }
-  .nav-btn:hover { background: rgba(201,168,76,0.25); }
-  .nav-btn:disabled { opacity:0.3; cursor:default; }
+  .nav-btn:hover { background: rgba(201,168,76,0.22); }
+  .nav-btn:disabled { opacity:0.25; cursor:default; }
 
   .nav-btn.primary {
-    background: linear-gradient(135deg, rgba(201,168,76,0.4), rgba(201,168,76,0.2));
+    background: linear-gradient(180deg, rgba(201,168,76,0.4), rgba(201,168,76,0.18));
     border-color: rgba(201,168,76,0.6);
-    box-shadow: 0 4px 20px rgba(201,168,76,0.2);
+    box-shadow: 0 4px 20px rgba(201,168,76,0.18);
   }
 
   .slide-counter {
     font-family:'Josefin Sans', sans-serif;
-    font-size: clamp(9px, 2.5vw, 11px);
-    letter-spacing:0.3em;
-    color: rgba(201,168,76,0.5);
-    min-width: 4ch;
+    font-size: clamp(8px, 1.6vmin, 11px);
+    letter-spacing:0.15em;
+    color: rgba(201,168,76,0.6);
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
     text-align:center;
   }
 
   /* ── KEYWORD MODAL ── */
   #modal-overlay {
     position:fixed; inset:0;
-    background:rgba(0,0,0,0.75);
-    backdrop-filter:blur(12px);
-    -webkit-backdrop-filter:blur(12px);
+    background:rgba(0,0,0,0.78);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
     z-index:200;
     display:flex; align-items:center; justify-content:center;
-    padding: clamp(20px, 5vw, 40px);
+    /* keep modal clear of the right nav bar */
+    padding-right: clamp(72px, 10vw, 100px);
     opacity:0; pointer-events:none;
     transition:opacity 0.3s ease;
   }
@@ -340,10 +387,12 @@
   #modal {
     background: linear-gradient(150deg, #1A2A1E, #0E1A12);
     border: 1px solid rgba(201,168,76,0.3);
-    border-radius: clamp(12px, 3vw, 20px);
-    padding: clamp(24px, 6vw, 44px);
-    width:100%; max-width:360px;
-    transform:translateY(20px) scale(0.96);
+    border-radius: clamp(10px, 2vmin, 18px);
+    padding: clamp(18px, 3.5vmin, 36px) clamp(20px, 4vmin, 44px);
+    width:100%;
+    /* landscape: wider, not as tall */
+    max-width: min(560px, 70vw);
+    transform:translateY(16px) scale(0.96);
     transition:transform 0.35s cubic-bezier(.4,0,.2,1);
     box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,168,76,0.1);
     text-align:center;
@@ -351,22 +400,22 @@
   #modal-overlay.open #modal { transform:translateY(0) scale(1); }
 
   .modal-icon {
-    font-size: clamp(28px, 8vw, 44px);
-    margin-bottom: clamp(8px, 2vw, 14px);
+    font-size: clamp(28px, 6vmin, 48px);
+    margin-bottom: clamp(6px, 1.5vmin, 12px);
   }
 
   .modal-title {
     font-family:'Playfair Display', serif;
-    font-size: clamp(1.1rem, 4.5vw, 1.6rem);
-    color: var(--cream);
-    margin-bottom: clamp(4px, 1.5vw, 8px);
+    font-size: clamp(1.1rem, 4vmin, 1.9rem);
+    color: #ffffff;
+    margin-bottom: clamp(4px, 1vmin, 8px);
   }
   .modal-hint {
     font-family:'Cormorant Garamond', serif;
-    font-size: clamp(0.85rem, 3vw, 1.1rem);
-    color: rgba(201,168,76,0.7);
+    font-size: clamp(0.9rem, 3.2vmin, 1.3rem);
+    color: rgba(232,201,122,0.9);
     font-style:italic;
-    margin-bottom: clamp(14px, 4vw, 24px);
+    margin-bottom: clamp(12px, 3vmin, 22px);
     line-height:1.4;
   }
 
@@ -379,11 +428,11 @@
 
   #modal-error {
     font-family:'Josefin Sans', sans-serif;
-    font-size: clamp(8px, 2.5vw, 11px);
+    font-size: clamp(9px, 2vmin, 13px);
     letter-spacing:0.2em;
     text-transform:uppercase;
-    color: #e85555;
-    margin-bottom: clamp(6px, 2vw, 10px);
+    color: #ff7070;
+    margin-bottom: clamp(6px, 1.5vmin, 10px);
     min-height:1.4em;
     opacity:0;
     transition:opacity 0.2s;
@@ -395,19 +444,19 @@
   #choices-grid {
     display:grid;
     grid-template-columns: 1fr 1fr;
-    gap: clamp(8px, 2.5vw, 12px);
+    gap: clamp(8px, 2vmin, 14px);
     width:100%;
-    margin-bottom: clamp(8px, 2vw, 12px);
+    margin-bottom: clamp(4px, 1vmin, 10px);
   }
 
   .choice-btn {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(201,168,76,0.25);
-    border-radius: clamp(8px, 2vw, 12px);
-    padding: clamp(12px, 3.5vw, 18px) clamp(8px, 2.5vw, 14px);
-    color: var(--cream);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: clamp(8px, 1.5vmin, 12px);
+    padding: clamp(10px, 2.5vmin, 20px) clamp(8px, 2vmin, 14px);
+    color: #ffffff;
     font-family:'Cormorant Garamond', serif;
-    font-size: clamp(0.9rem, 3.5vw, 1.15rem);
+    font-size: clamp(0.95rem, 3.5vmin, 1.4rem);
     font-style:italic;
     line-height:1.3;
     cursor:pointer;
@@ -418,25 +467,25 @@
     overflow:hidden;
   }
   .choice-btn:hover {
-    background: rgba(201,168,76,0.12);
-    border-color: rgba(201,168,76,0.5);
+    background: rgba(201,168,76,0.15);
+    border-color: rgba(201,168,76,0.55);
   }
   .choice-btn:active { transform:scale(0.96); }
 
   .choice-btn.correct {
-    background: rgba(74,124,89,0.35) !important;
+    background: rgba(74,124,89,0.4) !important;
     border-color: #4A7C59 !important;
-    color: #a8e8c0 !important;
+    color: #c0ffda !important;
     animation: correctPop 0.4s cubic-bezier(.4,0,.2,1);
   }
   .choice-btn.wrong {
-    background: rgba(200,60,60,0.25) !important;
+    background: rgba(200,60,60,0.3) !important;
     border-color: #e85555 !important;
-    color: #ffaaaa !important;
+    color: #ffbbbb !important;
     animation: shake 0.4s cubic-bezier(.36,.07,.19,.97);
   }
   .choice-btn.dimmed {
-    opacity: 0.35;
+    opacity: 0.3;
     pointer-events:none;
   }
 
@@ -449,10 +498,10 @@
   .choice-label {
     display:block;
     font-family:'Josefin Sans', sans-serif;
-    font-size: clamp(7px, 2vw, 10px);
+    font-size: clamp(7px, 1.5vmin, 11px);
     letter-spacing:0.3em;
     text-transform:uppercase;
-    color: rgba(201,168,76,0.5);
+    color: rgba(201,168,76,0.65);
     margin-bottom: 4px;
     font-style:normal;
   }
@@ -504,6 +553,10 @@
 </head>
 <body>
 <div id="progress-bar"></div>
+<div id="rotate-prompt">
+  <div class="rotate-icon">📱</div>
+  <p>Please rotate your device<br/>to landscape for the best experience</p>
+</div>
 <div id="app"></div>
 
 <!-- NAV -->
@@ -587,10 +640,10 @@ const SLIDES = [
     theme: 'slide-activity',
     keyword: 'PEBBLE',
     content: () => `
-      <div style="font-size:clamp(60px,18vw,110px);animation:float 2s ease-in-out infinite;margin-bottom:12px;">▶</div>
-      <h2 class="fade-in-up-delay-1" style="font-size:clamp(1.8rem,7vw,3.5rem);">Play the<br/>game now.</h2>
+      <div style="font-size:clamp(60px,14vmin,110px);animation:float 2s ease-in-out infinite;margin-bottom:12px;">▶</div>
+      <h2 class="fade-in-up-delay-1" style="font-size:clamp(2rem,8vmin,4.5rem);">Play the<br/>game now.</h2>
       <div class="divider fade-in-up-delay-2"></div>
-      <div class="body fade-in-up-delay-3" style="color:rgba(201,168,76,0.7);font-style:italic;">Keyword required to continue →</div>`
+      <div class="body fade-in-up-delay-3" style="color:rgba(232,201,122,0.95);font-style:italic;">🔑 Tap Next to answer → to continue →</div>`
   },
   // 4 — DEBRIEF
   {
@@ -609,7 +662,7 @@ const SLIDES = [
     theme: 'slide-reveal',
     keyword: null,
     content: () => `
-      <h1 class="glow-pulse" style="font-size:clamp(3.5rem,14vw,8rem);letter-spacing:-0.02em;">But…</h1>`
+      <h1 class="glow-pulse" style="font-size:clamp(3.5rem,12vmin,9rem);letter-spacing:-0.02em;">But…</h1>`
   },
   // 6 — STAY AS ONE (intro)
   {
@@ -635,7 +688,7 @@ const SLIDES = [
         <span class="pill">Fastest result</span>
         <span class="pill">Most number count</span>
       </div>
-      <div class="body fade-in-up-delay-3" style="color:rgba(201,168,76,0.7);font-style:italic;">Keyword required to continue →</div>`
+      <div class="body fade-in-up-delay-3" style="color:rgba(232,201,122,0.95);font-style:italic;">🔑 Tap Next to answer → to continue →</div>`
   },
   // 8 — THE REVEAL
   {
@@ -654,7 +707,7 @@ const SLIDES = [
     content: () => `
       <div class="orb" style="width:250px;height:250px;background:#c9a84c;top:-80px;right:-60px;opacity:0.08;"></div>
       <div class="verse-block fade-in-up" style="border-color:var(--gold-light);">
-        <div class="verse-text" style="font-size:clamp(1.1rem,4.5vw,1.9rem);">"Two are better than one, because they have a good reward for their toil. For if they fall, one will lift up his fellow."</div>
+        <div class="verse-text" style="font-size:clamp(1.2rem,4.5vmin,2.2rem);">"Two are better than one, because they have a good reward for their toil. For if they fall, one will lift up his fellow."</div>
         <div class="verse-ref">— Ecclesiastes 4:9–10</div>
       </div>`
   },
@@ -673,19 +726,19 @@ const SLIDES = [
     theme: 'slide-message',
     keyword: null,
     content: () => `
-      <div class="body fade-in-up" style="font-size:clamp(1rem,4vw,1.6rem);color:var(--cream);">The verse doesn't say<br/>two are better because they are <em>equal</em>.</div>
+      <div class="body fade-in-up" style="font-size:clamp(1.1rem,4vmin,2rem);color:#ffffff;">The verse doesn't say<br/>two are better because they are <em>equal</em>.</div>
       <div class="divider fade-in-up-delay-1"></div>
-      <h3 class="fade-in-up-delay-2" style="font-size:clamp(1.2rem,5vw,2.4rem);">Two are better because<br/>when one falls,<br/>the other <em style="color:var(--gold-light);">lifts.</em></h3>`
+      <h3 class="fade-in-up-delay-2" style="font-size:clamp(1.2rem,5vmin,2.8rem);">Two are better because<br/>when one falls,<br/>the other <em style="color:var(--gold-light);">lifts.</em></h3>`
   },
   // 12 — UNITY
   {
     theme: 'slide-message',
     keyword: 'TOGETHERNESS',
     content: () => `
-      <h2 class="fade-in-up" style="font-size:clamp(1.4rem,6vw,3rem);">Unity is not about<br/><em>removing</em> difference.</h2>
+      <h2 class="fade-in-up" style="font-size:clamp(1.6rem,6.5vmin,3.6rem);">Unity is not about<br/><em>removing</em> difference.</h2>
       <div class="divider fade-in-up-delay-1"></div>
       <h3 class="fade-in-up-delay-2">It is about making difference<br/><em style="color:var(--gold-light);">purposeful.</em></h3>
-      <div class="body fade-in-up-delay-3" style="color:rgba(201,168,76,0.6);font-style:italic;margin-top:16px;">Keyword required to continue →</div>`
+      <div class="body fade-in-up-delay-3" style="color:rgba(232,201,122,0.95);font-style:italic;margin-top:16px;">🔑 Tap Next to answer → to continue →</div>`
   },
   // 13 — THREE TRUTHS INTRO
   {
@@ -695,7 +748,7 @@ const SLIDES = [
       <div class="eyebrow fade-in-up">From the text</div>
       <h1 class="fade-in-up-delay-1">Three<br/><em>Truths</em></h1>
       <div class="divider fade-in-up-delay-2"></div>
-      <div class="body fade-in-up-delay-3" style="font-style:italic;color:rgba(201,168,76,0.7);">What the pebble teaches us.</div>`
+      <div class="body fade-in-up-delay-3" style="font-style:italic;color:rgba(232,201,122,0.9);">What the pebble teaches us.</div>`
   },
   // 14 — TRUTH 1 TITLE
   {
@@ -734,7 +787,7 @@ const SLIDES = [
         In this team — your background, your role, your personality — are <strong>not obstacles</strong>.<br/><br/>
         They become obstacles only when we make them the <strong>loudest thing</strong> in the room.
       </div>
-      <div class="body fade-in-up-delay-2" style="color:rgba(201,168,76,0.6);font-style:italic;margin-top:12px;">Keyword required to continue →</div>`
+      <div class="body fade-in-up-delay-2" style="color:rgba(232,201,122,0.95);font-style:italic;margin-top:12px;">🔑 Tap Next to answer → to continue →</div>`
   },
   // 17 — TRUTH 2 TITLE
   {
@@ -780,13 +833,13 @@ const SLIDES = [
       <div class="big-number">2</div>
       <div class="truth-label fade-in-up">Truth 2 of 3</div>
       <div class="verse-block fade-in-up-delay-1">
-        <div class="verse-text" style="font-size:clamp(1rem,3.8vw,1.55rem);">"Good reward for their toil" is the promise.</div>
+        <div class="verse-text" style="font-size:clamp(1.1rem,4vmin,1.9rem);">"Good reward for their toil" is the promise.</div>
       </div>
       <div class="body fade-in-up-delay-2" style="max-width:46ch;line-height:1.9;">
         The blessing is in the <strong>working-together</strong>.<br/>
         Are you working <em>alongside</em> — or working <strong>together</strong>?
       </div>
-      <div class="body fade-in-up-delay-3" style="color:rgba(201,168,76,0.6);font-style:italic;margin-top:12px;">Keyword required to continue →</div>`
+      <div class="body fade-in-up-delay-3" style="color:rgba(232,201,122,0.95);font-style:italic;margin-top:12px;">🔑 Tap Next to answer → to continue →</div>`
   },
   // 21 — TRUTH 3 TITLE
   {
@@ -820,7 +873,7 @@ const SLIDES = [
         That fellow is not a stranger.<br/>
         It is someone on your <strong>left or right</strong>, right now.
       </div>
-      <div class="body fade-in-up-delay-2" style="color:rgba(201,168,76,0.6);font-style:italic;margin-top:12px;">Keyword required to continue →</div>`
+      <div class="body fade-in-up-delay-2" style="color:rgba(232,201,122,0.95);font-style:italic;margin-top:12px;">🔑 Tap Next to answer → to continue →</div>`
   },
   // 24 — LOOK LEFT/RIGHT
   {
@@ -832,7 +885,7 @@ const SLIDES = [
         <div class="direction">Look right. →</div>
       </div>
       <div class="divider fade-in-up-delay-1"></div>
-      <h3 class="fade-in-up-delay-2" style="font-size:clamp(1.2rem,5.5vw,2.4rem);">Who needs<br/><em style="color:var(--gold-light);">lifting today?</em></h3>`
+      <h3 class="fade-in-up-delay-2" style="font-size:clamp(1.3rem,5.5vmin,2.8rem);">Who needs<br/><em style="color:var(--gold-light);">lifting today?</em></h3>`
   },
   // 25 — REFLECT PERSONAL
   {
@@ -856,10 +909,10 @@ const SLIDES = [
       <div class="orb" style="width:200px;height:200px;background:#c9a84c;top:-60px;right:-40px;opacity:0.1;"></div>
       <div class="eyebrow fade-in-up">Take a Moment · Prayer</div>
       <div class="verse-block fade-in-up-delay-1" style="border-color:var(--gold-light);">
-        <div class="verse-text" style="font-size:clamp(1.1rem,4.5vw,2rem);line-height:1.5;">"Lord, make us one —<br/>not the same, but together.<br/><em>Rooted. Rising.</em>"</div>
+        <div class="verse-text" style="font-size:clamp(1.2rem,4.5vmin,2.3rem);line-height:1.5;">"Lord, make us one —<br/>not the same, but together.<br/><em>Rooted. Rising.</em>"</div>
       </div>
       <div class="divider fade-in-up-delay-2"></div>
-      <h1 class="fade-in-up-delay-3 final-glow" style="font-size:clamp(1.4rem,6vw,3rem);letter-spacing:0.04em;">
+      <h1 class="fade-in-up-delay-3 final-glow" style="font-size:clamp(1.5rem,6vmin,3.4rem);letter-spacing:0.04em;">
         Rooted in Faith,<br/><em>Rising in Unity</em>
       </h1>`
   },
@@ -1135,6 +1188,16 @@ document.addEventListener('touchend', e => {
     else goBack();
   }
 }, { passive: true });
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ORIENTATION LOCK
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+(function() {
+  // Try native lock (works on Android Chrome, some iOS PWA contexts)
+  if (screen.orientation && screen.orientation.lock) {
+    screen.orientation.lock('landscape').catch(() => {});
+  }
+})();
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // GO
