@@ -52,22 +52,42 @@
     padding: clamp(24px, 6vw, 60px) clamp(20px, 5vw, 50px);
     padding-bottom: calc(clamp(24px, 6vw, 60px) + env(safe-area-inset-bottom, 0px));
     opacity:0;
-    transform:translateY(40px) scale(0.97);
-    transition: opacity 0s, transform 0s;
+    visibility:hidden;
     pointer-events:none;
     text-align:center;
+    transition: opacity 0.55s cubic-bezier(.4,0,.2,1), transform 0.55s cubic-bezier(.4,0,.2,1), visibility 0s 0.55s;
+    transform: translateY(0) scale(1);
+  }
+  .slide.enter-from-forward {
+    transform: translateY(36px) scale(0.97);
+    opacity: 0;
+    visibility: visible;
+  }
+  .slide.enter-from-back {
+    transform: translateY(-28px) scale(1.02);
+    opacity: 0;
+    visibility: visible;
   }
   .slide.active {
     opacity:1;
+    visibility:visible;
     transform:translateY(0) scale(1);
     pointer-events:all;
-    transition: opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1);
+    transition: opacity 0.55s cubic-bezier(.4,0,.2,1), transform 0.55s cubic-bezier(.4,0,.2,1), visibility 0s 0s;
   }
-  .slide.exit {
+  .slide.exit-to-back {
     opacity:0;
-    transform:translateY(-30px) scale(1.02);
-    transition: opacity 0.45s ease-in, transform 0.45s ease-in;
+    transform: translateY(28px) scale(0.97);
     pointer-events:none;
+    transition: opacity 0.35s ease-in, transform 0.35s ease-in, visibility 0s 0.35s;
+    visibility:hidden;
+  }
+  .slide.exit-to-forward {
+    opacity:0;
+    transform: translateY(-28px) scale(1.02);
+    pointer-events:none;
+    transition: opacity 0.35s ease-in, transform 0.35s ease-in, visibility 0s 0.35s;
+    visibility:hidden;
   }
 
   /* ── SLIDE TYPES / THEMES ── */
@@ -350,27 +370,6 @@
     line-height:1.4;
   }
 
-  #keyword-input {
-    width:100%;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(201,168,76,0.3);
-    border-radius: clamp(6px, 2vw, 10px);
-    padding: clamp(10px, 3vw, 14px) clamp(14px, 4vw, 20px);
-    color: var(--cream);
-    font-family:'Josefin Sans', sans-serif;
-    font-size: clamp(13px, 4vw, 17px);
-    letter-spacing:0.2em;
-    text-transform:uppercase;
-    text-align:center;
-    outline:none;
-    transition:border-color 0.2s;
-    margin-bottom: clamp(10px, 3vw, 16px);
-  }
-  #keyword-input:focus { border-color: rgba(201,168,76,0.7); }
-  #keyword-input.shake {
-    animation: shake 0.4s cubic-bezier(.36,.07,.19,.97);
-    border-color: #e85555;
-  }
   @keyframes shake {
     10%,90% { transform:translateX(-3px); }
     20%,80% { transform:translateX(5px); }
@@ -384,30 +383,79 @@
     letter-spacing:0.2em;
     text-transform:uppercase;
     color: #e85555;
-    margin-bottom: clamp(8px, 2vw, 12px);
+    margin-bottom: clamp(6px, 2vw, 10px);
     min-height:1.4em;
     opacity:0;
     transition:opacity 0.2s;
+    text-align:center;
   }
   #modal-error.show { opacity:1; }
 
-  .modal-submit {
+  /* ── CHOICES GRID ── */
+  #choices-grid {
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(8px, 2.5vw, 12px);
     width:100%;
-    background: linear-gradient(135deg, rgba(201,168,76,0.5), rgba(201,168,76,0.25));
-    border: 1px solid rgba(201,168,76,0.5);
-    border-radius: clamp(6px, 2vw, 10px);
-    padding: clamp(11px, 3vw, 15px);
-    color: var(--cream);
-    font-family:'Josefin Sans', sans-serif;
-    font-size: clamp(11px, 3.5vw, 14px);
-    letter-spacing:0.25em;
-    text-transform:uppercase;
-    cursor:pointer;
-    transition: all 0.2s;
-    touch-action:manipulation;
+    margin-bottom: clamp(8px, 2vw, 12px);
   }
-  .modal-submit:active { transform:scale(0.97); }
-  .modal-submit:hover { background: linear-gradient(135deg, rgba(201,168,76,0.65), rgba(201,168,76,0.35)); }
+
+  .choice-btn {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: clamp(8px, 2vw, 12px);
+    padding: clamp(12px, 3.5vw, 18px) clamp(8px, 2.5vw, 14px);
+    color: var(--cream);
+    font-family:'Cormorant Garamond', serif;
+    font-size: clamp(0.9rem, 3.5vw, 1.15rem);
+    font-style:italic;
+    line-height:1.3;
+    cursor:pointer;
+    transition: background 0.18s, border-color 0.18s, transform 0.15s;
+    touch-action:manipulation;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .choice-btn:hover {
+    background: rgba(201,168,76,0.12);
+    border-color: rgba(201,168,76,0.5);
+  }
+  .choice-btn:active { transform:scale(0.96); }
+
+  .choice-btn.correct {
+    background: rgba(74,124,89,0.35) !important;
+    border-color: #4A7C59 !important;
+    color: #a8e8c0 !important;
+    animation: correctPop 0.4s cubic-bezier(.4,0,.2,1);
+  }
+  .choice-btn.wrong {
+    background: rgba(200,60,60,0.25) !important;
+    border-color: #e85555 !important;
+    color: #ffaaaa !important;
+    animation: shake 0.4s cubic-bezier(.36,.07,.19,.97);
+  }
+  .choice-btn.dimmed {
+    opacity: 0.35;
+    pointer-events:none;
+  }
+
+  @keyframes correctPop {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.06); }
+    100% { transform: scale(1); }
+  }
+
+  .choice-label {
+    display:block;
+    font-family:'Josefin Sans', sans-serif;
+    font-size: clamp(7px, 2vw, 10px);
+    letter-spacing:0.3em;
+    text-transform:uppercase;
+    color: rgba(201,168,76,0.5);
+    margin-bottom: 4px;
+    font-style:normal;
+  }
 
   /* ── CELEBRATION PARTICLES ── */
   #confetti { position:fixed; inset:0; pointer-events:none; z-index:150; overflow:hidden; }
@@ -469,13 +517,10 @@
 <div id="modal-overlay">
   <div id="modal">
     <div class="modal-icon" id="modal-icon">🔑</div>
-    <div class="modal-title" id="modal-title">Enter the Key Word</div>
-    <div class="modal-hint" id="modal-hint">Type the word to unlock the next slide</div>
-    <input type="text" id="keyword-input" placeholder="TYPE HERE…"
-      autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false"
-      oninput="clearError()" onkeydown="handleKeydown(event)"/>
-    <div id="modal-error">Incorrect — try again</div>
-    <button class="modal-submit" onclick="submitKeyword()">Unlock →</button>
+    <div class="modal-title" id="modal-title">Choose the Answer</div>
+    <div class="modal-hint" id="modal-hint">Which word unlocks the next slide?</div>
+    <div id="modal-error">Try again — choose wisely</div>
+    <div id="choices-grid"></div>
   </div>
 </div>
 
@@ -842,7 +887,8 @@ function renderSlide(idx) {
 }
 
 function init() {
-  renderSlide(0).classList.add('active');
+  const first = renderSlide(0);
+  first.classList.add('active');
   updateUI();
 }
 
@@ -869,36 +915,31 @@ function transitionTo(idx, dir) {
   const old = document.getElementById(`slide-${current}`);
   if (!old) return;
 
-  // Pre-render next if not exists
+  // Render next slide if not yet in DOM
   let next = document.getElementById(`slide-${idx}`);
   if (!next) next = renderSlide(idx);
 
+  // 1. Add enter-from class BEFORE making it visible (no inline styles)
+  next.classList.add(dir === 'forward' ? 'enter-from-forward' : 'enter-from-back');
+
+  // 2. Exit old slide
   old.classList.remove('active');
-  old.classList.add('exit');
+  old.classList.add(dir === 'forward' ? 'exit-to-forward' : 'exit-to-back');
 
-  // Position new slide
-  if (dir === 'forward') {
-    next.style.transform = 'translateY(40px) scale(0.97)';
-  } else {
-    next.style.transform = 'translateY(-30px) scale(1.02)';
-  }
-  next.style.opacity = '0';
-  next.style.transition = 'none';
-
+  // 3. One rAF to let the enter-from class paint, then switch to active
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      next.style.transition = '';
+      next.classList.remove('enter-from-forward', 'enter-from-back');
       next.classList.add('active');
       current = idx;
       updateUI();
     });
   });
 
+  // 4. Clean up exit class after transition ends
   setTimeout(() => {
-    old.classList.remove('exit');
-    old.style.opacity = '';
-    old.style.transform = '';
-  }, 500);
+    old.classList.remove('exit-to-forward', 'exit-to-back', 'active');
+  }, 400);
 }
 
 function updateUI() {
@@ -920,66 +961,127 @@ function updateUI() {
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// MODAL
+// QUIZ DATA — answer + 3 wrong choices per locked slide
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const KEYWORD_HINTS = {
-  'PEBBLE':        { icon: '🪨', hint: 'What did each person receive?' },
-  'ONE':           { icon: '✊', hint: 'How many groups could there have been?' },
-  'TOGETHERNESS':  { icon: '🤝', hint: 'What did God say makes a team?' },
-  'LENS':          { icon: '🔍', hint: 'What did the game reveal — a division or a ___?' },
-  'REWARD':        { icon: '🏆', hint: 'What does the verse promise for working together?' },
-  'LIFT':          { icon: '🌿', hint: 'What does one do when the other falls?' },
+const QUIZ = {
+  'PEBBLE': {
+    icon: '🪨',
+    question: 'What did each person receive at the start of the game?',
+    answer: 'A Pebble',
+    wrong: ['A Card', 'A Token', 'A Badge'],
+  },
+  'ONE': {
+    icon: '✊',
+    question: 'How many groups could there have been if no one divided?',
+    answer: 'One',
+    wrong: ['Three', 'Ten', 'None'],
+  },
+  'TOGETHERNESS': {
+    icon: '🤝',
+    question: 'According to God\'s design, what makes a team?',
+    answer: 'Togetherness',
+    wrong: ['Sameness', 'Strength', 'Similarity'],
+  },
+  'LENS': {
+    icon: '🔍',
+    question: 'The game didn\'t create division — it revealed which ___ we chose.',
+    answer: 'Lens',
+    wrong: ['Side', 'Color', 'Group'],
+  },
+  'REWARD': {
+    icon: '🏆',
+    question: 'What does Ecclesiastes 4:9 promise for working together?',
+    answer: 'A Reward',
+    wrong: ['A Crown', 'A Gift', 'A Rest'],
+  },
+  'LIFT': {
+    icon: '🌿',
+    question: 'When one falls, what does the other do?',
+    answer: 'Lift',
+    wrong: ['Wait', 'Pray', 'Lead'],
+  },
 };
 
 let currentKeyword = '';
+let choicesLocked = false;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 function openModal(kw) {
   currentKeyword = kw;
-  const meta = KEYWORD_HINTS[kw] || { icon:'🔑', hint:'Type the key word to continue.' };
-  document.getElementById('modal-icon').textContent = meta.icon;
-  document.getElementById('modal-hint').textContent = meta.hint;
-  document.getElementById('keyword-input').value = '';
+  choicesLocked = false;
+  const q = QUIZ[kw];
+
+  document.getElementById('modal-icon').textContent = q.icon;
+  document.getElementById('modal-hint').textContent = q.question;
   document.getElementById('modal-error').classList.remove('show');
+
+  // Build shuffled choices
+  const choices = shuffle([q.answer, ...q.wrong]);
+  const grid = document.getElementById('choices-grid');
+  grid.innerHTML = '';
+  choices.forEach((choice, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="choice-label">${String.fromCharCode(65 + i)}</span>${choice}`;
+    btn.onclick = () => handleChoice(btn, choice);
+    grid.appendChild(btn);
+  });
+
   document.getElementById('modal-overlay').classList.add('open');
   modalOpen = true;
-  setTimeout(() => document.getElementById('keyword-input').focus(), 350);
+}
+
+function handleChoice(btn, choice) {
+  if (choicesLocked) return;
+  const q = QUIZ[currentKeyword];
+  const allBtns = document.querySelectorAll('.choice-btn');
+
+  if (choice.toUpperCase() === q.answer.toUpperCase()) {
+    // ✅ Correct
+    choicesLocked = true;
+    btn.classList.add('correct');
+    allBtns.forEach(b => { if (b !== btn) b.classList.add('dimmed'); });
+    burst();
+    setTimeout(() => {
+      closeModal();
+      transitionTo(current + 1, 'forward');
+    }, 800);
+  } else {
+    // ❌ Wrong
+    btn.classList.add('wrong');
+    document.getElementById('modal-error').classList.add('show');
+    setTimeout(() => {
+      btn.classList.remove('wrong');
+      btn.classList.add('dimmed');
+      btn.style.pointerEvents = 'none';
+      document.getElementById('modal-error').classList.remove('show');
+    }, 700);
+  }
 }
 
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open');
   modalOpen = false;
   currentKeyword = '';
-}
-
-function clearError() {
-  document.getElementById('modal-error').classList.remove('show');
-  document.getElementById('keyword-input').classList.remove('shake');
-}
-
-function handleKeydown(e) {
-  if (e.key === 'Enter') submitKeyword();
-  if (e.key === 'Escape') closeModal();
-}
-
-function submitKeyword() {
-  const val = document.getElementById('keyword-input').value.trim().toUpperCase();
-  if (val === currentKeyword) {
-    closeModal();
-    burst();
-    setTimeout(() => transitionTo(current + 1, 'forward'), 300);
-  } else {
-    const input = document.getElementById('keyword-input');
-    input.classList.remove('shake');
-    void input.offsetWidth;
-    input.classList.add('shake');
-    document.getElementById('modal-error').classList.add('show');
-    setTimeout(() => input.classList.remove('shake'), 500);
-  }
+  choicesLocked = false;
 }
 
 // Close modal on overlay click
 document.getElementById('modal-overlay').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
+});
+
+// Escape key closes modal
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && modalOpen) closeModal();
 });
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
