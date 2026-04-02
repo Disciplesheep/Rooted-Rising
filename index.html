@@ -30,41 +30,27 @@
     font-family:'Cormorant Garamond', serif;
   }
 
-  /* ── ROTATE-TO-LANDSCAPE OVERLAY (shown only in portrait) ── */
-  #rotate-prompt {
-    display:none;
-    position:fixed; inset:0; z-index:9999;
-    background:#0e1a10;
-    flex-direction:column;
-    align-items:center; justify-content:center;
-    gap:20px;
-  }
-  #rotate-prompt .rotate-icon {
-    font-size:clamp(50px,15vw,80px);
-    animation: rotateHint 1.8s ease-in-out infinite;
-  }
-  @keyframes rotateHint {
-    0%,100% { transform: rotate(0deg); }
-    40%      { transform: rotate(90deg); }
-    60%      { transform: rotate(90deg); }
-  }
-  #rotate-prompt p {
-    font-family:'Josefin Sans',sans-serif;
-    font-size:clamp(13px,4vw,18px);
-    letter-spacing:0.25em;
-    text-transform:uppercase;
-    color:rgba(201,168,76,0.85);
-    text-align:center;
-    padding:0 24px;
+  /* ── WRAPPER — handles auto-rotate in portrait ── */
+  #wrapper {
+    position:fixed;
+    inset:0;
+    overflow:hidden;
   }
   @media (orientation: portrait) {
-    #rotate-prompt { display:flex; }
-    #app, #nav, #progress-bar { display:none !important; }
+    #wrapper {
+      top:  calc((100vh - 100vw) / 2);
+      left: calc((100vw - 100vh) / 2);
+      right:  auto;
+      bottom: auto;
+      width:  100vh;   /* portrait height = landscape width */
+      height: 100vw;   /* portrait width  = landscape height */
+      transform: rotate(90deg);
+    }
   }
 
   /* ── PROGRESS BAR ── */
   #progress-bar {
-    position:fixed; top:0; left:0; height:3px;
+    position:absolute; top:0; left:0; height:3px;
     background:linear-gradient(90deg, var(--gold), var(--gold-light));
     width:0%; z-index:999;
     transition:width 0.5s cubic-bezier(.4,0,.2,1);
@@ -72,12 +58,12 @@
   }
 
   /* ── SLIDE CONTAINER ── */
-  /* Reserve right strip for nav bar */
+  /* Reserve left + right strips for nav bars */
   #app {
-    position:fixed;
-    top:0; left:0;
+    position:absolute;
+    top:0; bottom:0;
+    left:  clamp(72px, 10vw, 100px);
     right: clamp(72px, 10vw, 100px);
-    bottom:0;
     overflow:hidden;
   }
 
@@ -314,9 +300,24 @@
     color: var(--gold-light);
   }
 
-  /* ── NAVIGATION — right-side vertical strip ── */
-  #nav {
-    position:fixed;
+  /* ── NAVIGATION — left strip (Back) ── */
+  #nav-left {
+    position:absolute;
+    top:0; left:0; bottom:0;
+    width: clamp(72px, 10vw, 100px);
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    z-index:100;
+    background: rgba(10,20,12,0.6);
+    border-right: 1px solid rgba(201,168,76,0.12);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    padding: 16px 0;
+  }
+
+  /* ── NAVIGATION — right strip (Counter + Next) ── */
+  #nav-right {
+    position:absolute;
     top:0; right:0; bottom:0;
     width: clamp(72px, 10vw, 100px);
     display:flex; flex-direction:column;
@@ -371,14 +372,14 @@
 
   /* ── KEYWORD MODAL ── */
   #modal-overlay {
-    position:fixed; inset:0;
+    position:absolute; inset:0;
     background:rgba(0,0,0,0.78);
     backdrop-filter:blur(14px);
     -webkit-backdrop-filter:blur(14px);
     z-index:200;
     display:flex; align-items:center; justify-content:center;
-    /* keep modal clear of the right nav bar */
-    padding-right: clamp(72px, 10vw, 100px);
+    /* keep modal clear of both nav bars */
+    padding: 0 clamp(72px, 10vw, 100px);
     opacity:0; pointer-events:none;
     transition:opacity 0.3s ease;
   }
@@ -507,7 +508,7 @@
   }
 
   /* ── CELEBRATION PARTICLES ── */
-  #confetti { position:fixed; inset:0; pointer-events:none; z-index:150; overflow:hidden; }
+  #confetti { position:absolute; inset:0; pointer-events:none; z-index:150; overflow:hidden; }
   .particle {
     position:absolute; width:6px; height:6px;
     border-radius:2px;
@@ -552,16 +553,17 @@
 </style>
 </head>
 <body>
+<div id="wrapper">
 <div id="progress-bar"></div>
-<div id="rotate-prompt">
-  <div class="rotate-icon">📱</div>
-  <p>Please rotate your device<br/>to landscape for the best experience</p>
-</div>
 <div id="app"></div>
 
-<!-- NAV -->
-<div id="nav">
+<!-- NAV LEFT — Back -->
+<div id="nav-left">
   <button class="nav-btn" id="btn-prev" onclick="goBack()">← Back</button>
+</div>
+
+<!-- NAV RIGHT — Counter + Next -->
+<div id="nav-right">
   <span class="slide-counter" id="counter">1 / 27</span>
   <button class="nav-btn primary" id="btn-next" onclick="requestNext()">Next →</button>
 </div>
@@ -579,6 +581,7 @@
 
 <!-- CONFETTI CANVAS -->
 <div id="confetti"></div>
+</div>
 
 <script>
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1183,17 +1186,28 @@ document.addEventListener('touchend', e => {
   if (modalOpen) return;
   const dx = e.changedTouches[0].clientX - touchStartX;
   const dy = e.changedTouches[0].clientY - touchStartY;
-  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
-    if (dx < 0) requestNext();
-    else goBack();
+
+  // CSS rotation remaps physical swipe directions in portrait:
+  // physical swipe UP   (-dy) = visual swipe RIGHT = Next
+  // physical swipe DOWN (+dy) = visual swipe LEFT  = Back
+  if (window.matchMedia('(orientation: portrait)').matches) {
+    if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 50) {
+      if (dy < 0) requestNext();
+      else goBack();
+    }
+  } else {
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      if (dx < 0) requestNext();
+      else goBack();
+    }
   }
 }, { passive: true });
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// ORIENTATION LOCK
+// ORIENTATION — CSS auto-rotate handles portrait; native lock is a bonus
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 (function() {
-  // Try native lock (works on Android Chrome, some iOS PWA contexts)
+  // Try native lock (works in Android Chrome PWA context; iOS ignores it)
   if (screen.orientation && screen.orientation.lock) {
     screen.orientation.lock('landscape').catch(() => {});
   }
