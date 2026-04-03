@@ -62,8 +62,8 @@
     position:absolute; inset:0;
     display:flex; flex-direction:column;
     align-items:center; justify-content:center;
-    /* landscape: moderate padding all around */
-    padding: clamp(10px, 2vh, 24px) clamp(24px, 4vw, 60px) clamp(10px, 2vh, 24px);
+    /* fill width, minimal padding */
+    padding: clamp(8px, 1.5vh, 18px) clamp(16px, 2.5vw, 36px) clamp(8px, 1.5vh, 18px);
     opacity:0;
     visibility:hidden;
     pointer-events:none;
@@ -175,7 +175,7 @@
     font-size: clamp(1.6rem, 5vmin, 3rem);
     line-height:1.5;
     color: rgba(255,252,245,0.95);
-    max-width:52ch;
+    width:100%;
   }
   .body strong { color: var(--gold-light); font-weight:600; }
 
@@ -183,8 +183,8 @@
     border-left: 3px solid var(--gold);
     padding-left: clamp(12px, 2.5vmin, 24px);
     text-align:left;
-    margin: clamp(10px, 2vmin, 22px) 0;
-    max-width:58ch;
+    margin: clamp(8px, 1.5vmin, 16px) 0;
+    width:100%;
   }
   .verse-text {
     font-family:'Playfair Display', serif;
@@ -276,7 +276,6 @@
     border-radius: clamp(8px, 2vmin, 16px);
     padding: clamp(12px, 3vmin, 28px);
     margin: clamp(8px, 2vmin, 18px) 0;
-    max-width:58ch;
     width:100%;
   }
 
@@ -314,13 +313,13 @@
     border-radius: clamp(8px, 1.5vmin, 12px);
     cursor:pointer;
     font-family:'Josefin Sans', sans-serif;
-    font-size: clamp(11px, 2.2vmin, 16px);
+    font-size: clamp(14px, 2.5vmin, 20px);
     letter-spacing:0.1em;
     text-transform:uppercase;
     writing-mode: horizontal-tb;
     text-orientation: mixed;
     padding: clamp(10px, 2vmin, 16px) clamp(18px, 3.5vmin, 32px);
-    height: clamp(40px, 6vmin, 56px);
+    height: clamp(44px, 6.5vmin, 60px);
     transition: all 0.22s ease;
     user-select:none;
     touch-action:manipulation;
@@ -338,9 +337,9 @@
 
   .slide-counter {
     font-family:'Josefin Sans', sans-serif;
-    font-size: clamp(10px, 2vmin, 14px);
+    font-size: clamp(14px, 2.2vmin, 20px);
     letter-spacing:0.15em;
-    color: rgba(201,168,76,0.7);
+    color: rgba(201,168,76,0.85);
     writing-mode: horizontal-tb;
     text-orientation: mixed;
     text-align:center;
@@ -384,13 +383,13 @@
 
   .modal-title {
     font-family:'Playfair Display', serif;
-    font-size: clamp(1.1rem, 4vmin, 1.9rem);
+    font-size: clamp(1.4rem, 4.5vmin, 2.4rem);
     color: #ffffff;
     margin-bottom: clamp(4px, 1vmin, 8px);
   }
   .modal-hint {
     font-family:'Cormorant Garamond', serif;
-    font-size: clamp(0.9rem, 3.2vmin, 1.3rem);
+    font-size: clamp(1.1rem, 3.5vmin, 1.8rem);
     color: rgba(232,201,122,0.9);
     font-style:italic;
     margin-bottom: clamp(12px, 3vmin, 22px);
@@ -406,7 +405,7 @@
 
   #modal-error {
     font-family:'Josefin Sans', sans-serif;
-    font-size: clamp(9px, 2vmin, 13px);
+    font-size: clamp(13px, 2.2vmin, 18px);
     letter-spacing:0.2em;
     text-transform:uppercase;
     color: #ff7070;
@@ -434,7 +433,7 @@
     padding: clamp(10px, 2.5vmin, 20px) clamp(8px, 2vmin, 14px);
     color: #ffffff;
     font-family:'Cormorant Garamond', serif;
-    font-size: clamp(0.95rem, 3.5vmin, 1.4rem);
+    font-size: clamp(1.2rem, 4vmin, 2rem);
     font-style:italic;
     line-height:1.3;
     cursor:pointer;
@@ -476,10 +475,10 @@
   .choice-label {
     display:block;
     font-family:'Josefin Sans', sans-serif;
-    font-size: clamp(7px, 1.5vmin, 11px);
+    font-size: clamp(12px, 2vmin, 16px);
     letter-spacing:0.3em;
     text-transform:uppercase;
-    color: rgba(201,168,76,0.65);
+    color: rgba(201,168,76,0.8);
     margin-bottom: 4px;
     font-style:normal;
   }
@@ -547,9 +546,9 @@
   #qr-canvas { display:block; }
   .qr-url {
     font-family:'Josefin Sans', sans-serif;
-    font-size: clamp(11px, 2vmin, 16px);
+    font-size: clamp(14px, 2.2vmin, 20px);
     letter-spacing:0.15em;
-    color: rgba(201,168,76,0.7);
+    color: rgba(201,168,76,0.85);
     text-transform:lowercase;
   }
 </style>
@@ -608,7 +607,7 @@ const SLIDES = [
         <div class="qr-url">disciplesheep.github.io/Rooted-Rising</div>
       </div>
       <div class="divider fade-in-up-delay-3"></div>
-      <h1 class="fade-in-up-delay-4 final-glow" style="font-size:clamp(1.4rem,5vmin,3rem);letter-spacing:0.04em;">Rooted in Faith,<br/><em>Rising in Unity</em></h1>`
+      <h1 class="fade-in-up-delay-4 final-glow" style="font-size:clamp(2rem,6vmin,4rem);letter-spacing:0.04em;">Rooted in Faith,<br/><em>Rising in Unity</em></h1>`
   },
   // 1 — TITLE
   {
@@ -721,7 +720,7 @@ const SLIDES = [
     content: () => `
       <div class="orb" style="width:250px;height:250px;background:#c9a84c;top:-80px;right:-60px;opacity:0.08;"></div>
       <div class="verse-block fade-in-up" style="border-color:var(--gold-light);">
-        <div class="verse-text" style="font-size:clamp(1.2rem,4.5vmin,2.2rem);">"Two are better than one, because they have a good reward for their toil. For if they fall, one will lift up his fellow."</div>
+        <div class="verse-text" style="font-size:clamp(1.6rem,5vmin,3rem);">"Two are better than one, because they have a good reward for their toil. For if they fall, one will lift up his fellow."</div>
         <div class="verse-ref">— Ecclesiastes 4:9–10</div>
       </div>`
   },
@@ -740,16 +739,16 @@ const SLIDES = [
     theme: 'slide-message',
     keyword: null,
     content: () => `
-      <div class="body fade-in-up" style="font-size:clamp(1.1rem,4vmin,2rem);color:#ffffff;">The verse doesn't say<br/>two are better because they are <em>equal</em>.</div>
+      <div class="body fade-in-up" style="font-size:clamp(1.6rem,5vmin,3rem);color:#ffffff;">The verse doesn't say<br/>two are better because they are <em>equal</em>.</div>
       <div class="divider fade-in-up-delay-1"></div>
-      <h3 class="fade-in-up-delay-2" style="font-size:clamp(1.2rem,5vmin,2.8rem);">Two are better because<br/>when one falls,<br/>the other <em style="color:var(--gold-light);">lifts.</em></h3>`
+      <h3 class="fade-in-up-delay-2" style="font-size:clamp(2rem,6.5vmin,4rem);">Two are better because<br/>when one falls,<br/>the other <em style="color:var(--gold-light);">lifts.</em></h3>`
   },
   // 12 — UNITY
   {
     theme: 'slide-message',
     keyword: 'TOGETHERNESS',
     content: () => `
-      <h2 class="fade-in-up" style="font-size:clamp(1.6rem,6.5vmin,3.6rem);">Unity is not about<br/><em>removing</em> difference.</h2>
+      <h2 class="fade-in-up" style="font-size:clamp(2.8rem,8vmin,5.5rem);">Unity is not about<br/><em>removing</em> difference.</h2>
       <div class="divider fade-in-up-delay-1"></div>
       <h3 class="fade-in-up-delay-2">It is about making difference<br/><em style="color:var(--gold-light);">purposeful.</em></h3>
       <div class="body fade-in-up-delay-3" style="color:rgba(232,201,122,0.95);font-style:italic;margin-top:16px;">🔑 Tap Next to answer → to continue →</div>`
@@ -797,7 +796,7 @@ const SLIDES = [
     content: () => `
       <div class="big-number">1</div>
       <div class="truth-label fade-in-up">Truth 1 of 3</div>
-      <div class="body fade-in-up-delay-1" style="text-align:left;line-height:1.9;max-width:50ch;">
+      <div class="body fade-in-up-delay-1" style="text-align:left;line-height:1.9;">
         In this team — your background, your role, your personality — are <strong>not obstacles</strong>.<br/><br/>
         They become obstacles only when we make them the <strong>loudest thing</strong> in the room.
       </div>
@@ -819,7 +818,7 @@ const SLIDES = [
     content: () => `
       <div class="big-number">2</div>
       <div class="truth-label fade-in-up">Truth 2 of 3</div>
-      <div class="body fade-in-up-delay-1" style="text-align:left;line-height:2;max-width:50ch;">
+      <div class="body fade-in-up-delay-1" style="text-align:left;line-height:2;">
         If the team grouped as one,<br/>you should all have <strong>won</strong>.<br/>
         You should have won <strong>fast</strong>.
       </div>`
@@ -847,9 +846,9 @@ const SLIDES = [
       <div class="big-number">2</div>
       <div class="truth-label fade-in-up">Truth 2 of 3</div>
       <div class="verse-block fade-in-up-delay-1">
-        <div class="verse-text" style="font-size:clamp(1.1rem,4vmin,1.9rem);">"Good reward for their toil" is the promise.</div>
+        <div class="verse-text" style="font-size:clamp(1.6rem,5vmin,3rem);">"Good reward for their toil" is the promise.</div>
       </div>
-      <div class="body fade-in-up-delay-2" style="max-width:46ch;line-height:1.9;">
+      <div class="body fade-in-up-delay-2" style="line-height:1.9;">
         The blessing is in the <strong>working-together</strong>.<br/>
         Are you working <em>alongside</em> — or working <strong>together</strong>?
       </div>
@@ -882,7 +881,7 @@ const SLIDES = [
     content: () => `
       <div class="big-number">3</div>
       <div class="truth-label fade-in-up">Truth 3 of 3</div>
-      <div class="body fade-in-up-delay-1" style="text-align:left;line-height:1.9;max-width:50ch;">
+      <div class="body fade-in-up-delay-1" style="text-align:left;line-height:1.9;">
         "If they fall, one will lift up <strong>his fellow</strong>."<br/><br/>
         That fellow is not a stranger.<br/>
         It is someone on your <strong>left or right</strong>, right now.
@@ -899,7 +898,7 @@ const SLIDES = [
         <div class="direction">Look right. →</div>
       </div>
       <div class="divider fade-in-up-delay-1"></div>
-      <h3 class="fade-in-up-delay-2" style="font-size:clamp(1.3rem,5.5vmin,2.8rem);">Who needs<br/><em style="color:var(--gold-light);">lifting today?</em></h3>`
+      <h3 class="fade-in-up-delay-2" style="font-size:clamp(2rem,6.5vmin,4rem);">Who needs<br/><em style="color:var(--gold-light);">lifting today?</em></h3>`
   },
   // 25 — REFLECT PERSONAL
   {
@@ -923,10 +922,10 @@ const SLIDES = [
       <div class="orb" style="width:200px;height:200px;background:#c9a84c;top:-60px;right:-40px;opacity:0.1;"></div>
       <div class="eyebrow fade-in-up">Take a Moment · Prayer</div>
       <div class="verse-block fade-in-up-delay-1" style="border-color:var(--gold-light);">
-        <div class="verse-text" style="font-size:clamp(1.2rem,4.5vmin,2.3rem);line-height:1.5;">"Lord, make us one —<br/>not the same, but together.<br/><em>Rooted in Faith. Rising in Unity.</em>"</div>
+        <div class="verse-text" style="font-size:clamp(1.6rem,5vmin,3rem);line-height:1.5;">"Lord, make us one —<br/>not the same, but together.<br/><em>Rooted in Faith. Rising in Unity.</em>"</div>
       </div>
       <div class="divider fade-in-up-delay-2"></div>
-      <h1 class="fade-in-up-delay-3 final-glow" style="font-size:clamp(1.5rem,6vmin,3.4rem);letter-spacing:0.04em;">
+      <h1 class="fade-in-up-delay-3 final-glow" style="font-size:clamp(2rem,6vmin,4rem);letter-spacing:0.04em;">
         Rooted in Faith,<br/><em>Rising in Unity</em>
       </h1>`
   },
